@@ -29,6 +29,8 @@ class SnakeGame : Application() {
 
     // fx components
     private lateinit var stage: Stage
+    private lateinit var menuScene: Scene
+    private lateinit var menuController: MenuSceneController
     private lateinit var gameScene: Scene
     private lateinit var graphicsContext: GraphicsContext
     private var lastFrameTime: Long = System.nanoTime()
@@ -75,23 +77,24 @@ class SnakeGame : Application() {
     }
 
     fun showMenu() {
-        // load fxml file
-        val loader: FXMLLoader = FXMLLoader(SnakeGame::class.java.getResource("menu.fxml"))
-        val root = loader.load<Parent>()
+        if (!::menuScene.isInitialized) {
+            // load fxml file
+            val loader = FXMLLoader(SnakeGame::class.java.getResource("menu.fxml"))
+            val root = loader.load<Parent>()
 
-        // set game reference of controller
-        val controller = loader.getController<MenuSceneController>()
-        controller.setGameApp(this)
-
+            // set game reference of controller
+            menuController = loader.getController()
+            menuController.setGameApp(this)
+            menuScene = Scene(root, 300.0, 400.0)
+        }
         // set scene
-        val scene = Scene(root, 300.0,400.0)
-        stage.scene = scene
+        stage.scene = menuScene
         stage.show()
     }
 
     private fun showGameOver() {
         // load fxml file
-        val loader: FXMLLoader = FXMLLoader(SnakeGame::class.java.getResource("game_over.fxml"))
+        val loader = FXMLLoader(SnakeGame::class.java.getResource("game_over.fxml"))
         val root = loader.load<Parent>()
 
         // set game reference of controller
