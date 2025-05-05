@@ -1,22 +1,21 @@
 package com.example.snake_game
 
+import javafx.animation.AnimationTimer
 import javafx.application.Application
+import javafx.event.EventHandler
+import javafx.fxml.FXMLLoader
+import javafx.scene.Parent
 import javafx.scene.Scene
-import javafx.stage.Stage
-import javafx.scene.paint.Color
 import javafx.scene.canvas.Canvas
 import javafx.scene.canvas.GraphicsContext
-import javafx.event.EventHandler
-import javafx.scene.input.KeyCode
 import javafx.scene.image.Image
+import javafx.scene.input.KeyCode
 import javafx.scene.layout.*
+import javafx.scene.paint.Color
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
-import javafx.animation.AnimationTimer
-import javafx.scene.control.Button
-import javafx.scene.control.Label
-import javafx.geometry.Pos
 import javafx.stage.Modality
+import javafx.stage.Stage
 
 class SnakeGame : Application() {
 
@@ -41,7 +40,8 @@ class SnakeGame : Application() {
     private var snakeStartY = WINDOW_HEIGHT / 2
     // reduce speed by moving less often
     private var lastMoveTime = 0L
-    private val moveIntervalNanos = 200_000_000L * (1/SPEED) // 200ms in nanoseconds
+    //private val moveIntervalNanos = 200_000_000L * (1/SPEED) // 200ms in nanoseconds
+    private var moveIntervalNanos = 200_000_000.0
     //image of background
     private val background = Image("background.png", false)
     // size of background
@@ -67,54 +67,66 @@ class SnakeGame : Application() {
         // set stage reference
         stage = primaryStage
         //window title
-        stage.title = "Snake Game"
+        stage.title = "SnakeGame"
         stage.isResizable = false
         // set application logo
         stage.icons.add(logo)
         showMenu()
     }
 
-    private fun showMenu() {
-        val root = VBox(20.0)
-        root.alignment = Pos.CENTER
-        val button = Button("Start Game")
-        button.setOnAction { startGame() }
-        root.children.add(button)
-        val menuScene = Scene(root, WINDOW_WIDTH.toDouble(), WINDOW_HEIGHT.toDouble())
-        stage.scene = menuScene
+    fun showMenu() {
+        // load fxml file
+        val loader: FXMLLoader = FXMLLoader(SnakeGame::class.java.getResource("menu.fxml"))
+        val root = loader.load<Parent>()
+
+        // set game reference of controller
+        val controller = loader.getController<MenuSceneController>()
+        controller.setGameApp(this)
+
+        // set scene
+        val scene = Scene(root, 300.0,400.0)
+        stage.scene = scene
         stage.show()
     }
 
     private fun showGameOver() {
+        // load fxml file
+        val loader: FXMLLoader = FXMLLoader(SnakeGame::class.java.getResource("game_over.fxml"))
+        val root = loader.load<Parent>()
+
+        // set game reference of controller
+        val gameOverController = loader.getController<GameOverSceneController>()
+        gameOverController.setGameApp(this)
+
         val gameOverStage = Stage()
         // window title
-        gameOverStage.title = "Snake Game"
+        gameOverStage.title = "SnakeGame"
         gameOverStage.isResizable = false
         // set application logo
         gameOverStage.icons.add(logo)
 
-        // fx components
-        val root = VBox(20.0)
-        root.alignment = Pos.CENTER
-        val label = Label("Game Over!")
-        val button = Button("Back to Menu")
+        // set scene
+        val scene = Scene(root, 300.0,200.0)
 
-        button.setOnAction {
-            gameOverStage.close()
-            showMenu()
-        }
-
-        root.children.addAll(label, button)
-        val scene = Scene(root, 300.0, 200.0)
         gameOverStage.scene = scene
-        // set the main window as owner
+        // set the game window as owner
         gameOverStage.initOwner(stage)
-        // block input to the main window
+        centerNewStageOverOwner(gameOverStage, stage)
+        // block input to the game window
         gameOverStage.initModality(Modality.APPLICATION_MODAL)
         gameOverStage.show()
     }
 
-    private fun startGame() {
+    private fun centerNewStageOverOwner(newStage: Stage, ownerStage: Stage) {
+        newStage.setOnShown {
+            val centerX = ownerStage.x + (ownerStage.width - newStage.width) / 2
+            val centerY = ownerStage.y + (ownerStage.height - newStage.height) / 2
+            newStage.x = centerX
+            newStage.y = centerY
+        }
+    }
+
+    fun startGame() {
         // Reset game state
         gameStarted = false
         currentlyActiveKeys.clear()
@@ -188,6 +200,7 @@ class SnakeGame : Application() {
             snake.eatFruit(fruit)
         }
 
+        moveIntervalNanos = 200_000_000.0 * (1.0/SPEED)
         // perform world updates
         // move only if enough time has passed (for slower movement)
         if (currentNanoTime - lastMoveTime >= moveIntervalNanos) {
