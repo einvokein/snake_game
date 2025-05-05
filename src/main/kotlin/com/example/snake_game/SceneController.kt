@@ -27,7 +27,7 @@ class SceneController {
     }
 
     public fun switchToGame(actionEvent: ActionEvent) {
-        val fxmlLoader = FXMLLoader(SnakeGame::class.java.getResource("game.fxml"))
+        val fxmlLoader = FXMLLoader(SnakeGame::class.java.getResource("game_over.fxml"))
         stage = (actionEvent.source as Node).scene.window as Stage
         stage.title = "Snake game"
         scene = Scene(fxmlLoader.load())

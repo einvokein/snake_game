@@ -9,11 +9,14 @@ import javafx.scene.canvas.GraphicsContext
 import javafx.event.EventHandler
 import javafx.scene.input.KeyCode
 import javafx.scene.image.Image
-import javafx.scene.layout.BackgroundImage
 import javafx.scene.layout.*
 import javafx.scene.text.Font
 import javafx.scene.text.FontWeight
 import javafx.animation.AnimationTimer
+import javafx.scene.control.Button
+import javafx.scene.control.Label
+import javafx.geometry.Pos
+import javafx.stage.Modality
 
 class SnakeGame : Application() {
 
@@ -25,7 +28,9 @@ class SnakeGame : Application() {
         var SPEED = 1.0
     }
 
-    private lateinit var mainScene: Scene
+    // fx components
+    private lateinit var stage: Stage
+    private lateinit var gameScene: Scene
     private lateinit var graphicsContext: GraphicsContext
     private var lastFrameTime: Long = System.nanoTime()
 
@@ -47,27 +52,85 @@ class SnakeGame : Application() {
     private val logo = Image("logo_3.png")
     // trophy image
     private val trophy =  Image("trophy.png")
+
     // flag indicating the game has started
     private var gameStarted = false
-
-    // snake
-    private var snake = Snake(SNAKE_LENGTH, Point(snakeStartX, snakeStartY))
-
-    // fruits
-    private var fruits = mutableListOf<Fruit>()
-
     // game loop for control
     private lateinit var gameLoop : AnimationTimer
 
-    override fun start(mainStage: Stage) {
+    // snake
+    private var snake = Snake(SNAKE_LENGTH, Point(snakeStartX, snakeStartY))
+    // fruits
+    private var fruits = mutableListOf<Fruit>()
+
+    override fun start(primaryStage: Stage) {
+        // set stage reference
+        stage = primaryStage
         //window title
-        mainStage.title = "Snake game"
-        mainStage.isResizable = false
+        stage.title = "Snake Game"
+        stage.isResizable = false
+        // set application logo
+        stage.icons.add(logo)
+        showMenu()
+    }
+
+    private fun showMenu() {
+        val root = VBox(20.0)
+        root.alignment = Pos.CENTER
+        val button = Button("Start Game")
+        button.setOnAction { startGame() }
+        root.children.add(button)
+        val menuScene = Scene(root, WINDOW_WIDTH.toDouble(), WINDOW_HEIGHT.toDouble())
+        stage.scene = menuScene
+        stage.show()
+    }
+
+    private fun showGameOver() {
+        val gameOverStage = Stage()
+        // window title
+        gameOverStage.title = "Snake Game"
+        gameOverStage.isResizable = false
+        // set application logo
+        gameOverStage.icons.add(logo)
 
         // fx components
+        val root = VBox(20.0)
+        root.alignment = Pos.CENTER
+        val label = Label("Game Over!")
+        val button = Button("Back to Menu")
+
+        button.setOnAction {
+            gameOverStage.close()
+            showMenu()
+        }
+
+        root.children.addAll(label, button)
+        val scene = Scene(root, 300.0, 200.0)
+        gameOverStage.scene = scene
+        // set the main window as owner
+        gameOverStage.initOwner(stage)
+        // block input to the main window
+        gameOverStage.initModality(Modality.APPLICATION_MODAL)
+        gameOverStage.show()
+    }
+
+    private fun startGame() {
+        // Reset game state
+        gameStarted = false
+        currentlyActiveKeys.clear()
+        fruits.clear()
+        snake = Snake(SNAKE_LENGTH, Point(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
+
+        // reload fruit list
+        for(i in 0 until FRUIT_COUNT) {fruits.add(Fruit())}
+        // generate the first fruits
+        for(fruit in fruits) {
+            fruit.generateFruit()
+        }
+
+        // set fx components
         val root = Pane()
-        mainScene = Scene(root)
-        mainStage.scene = mainScene
+        gameScene = Scene(root, WINDOW_WIDTH.toDouble(), WINDOW_HEIGHT.toDouble())
 
         //set canvas
         val canvas = Canvas(WINDOW_WIDTH.toDouble(), WINDOW_HEIGHT.toDouble())
@@ -83,16 +146,9 @@ class SnakeGame : Application() {
         )
         root.background = Background(backgroundImage)
 
-        // load fruit list
-        for(i in 0 until FRUIT_COUNT) {fruits.add(Fruit())}
-        // generate the first fruits
-        for(fruit in fruits) {
-            fruit.generateFruit()
-        }
+        graphicsContext = canvas.graphicsContext2D
 
         prepareActionHandlers()
-
-        graphicsContext = canvas.graphicsContext2D
 
         // Main loop
         gameLoop = object : AnimationTimer() {
@@ -101,12 +157,13 @@ class SnakeGame : Application() {
             }
         }
         gameLoop.start()
-        mainStage.icons.add(logo)
-        mainStage.show()
+
+        // set gameScene as current scene
+        stage.scene = gameScene
     }
 
     private fun prepareActionHandlers() {
-        mainScene.onKeyPressed = EventHandler { event ->
+        gameScene.onKeyPressed = EventHandler { event ->
             currentlyActiveKeys.add(event.code)
             // starts moving the snake after pressing the first key
             gameStarted = true
@@ -114,9 +171,7 @@ class SnakeGame : Application() {
     }
 
     private fun tickAndRender(currentNanoTime: Long) {
-        // the time elapsed since the last frame, in nanoseconds
-        // can be used for physics calculation, etc
-        val elapsedNanos = currentNanoTime - lastFrameTime
+        // set lastFrameTime
         lastFrameTime = currentNanoTime
 
         // clear canvas
@@ -124,34 +179,39 @@ class SnakeGame : Application() {
 
         // draw figures
         snake.draw(graphicsContext)
-        for(fruit in fruits) {
+        for (fruit in fruits) {
             fruit.draw(graphicsContext)
         }
 
         // snake tries to eat fruit
-        for(fruit in fruits) {
+        for (fruit in fruits) {
             snake.eatFruit(fruit)
         }
 
         // perform world updates
-        // move only if enough time has passed
+        // move only if enough time has passed (for slower movement)
         if (currentNanoTime - lastMoveTime >= moveIntervalNanos) {
-            updateSnakePosition()
+            try {
+                updateSnakePosition()
+            } catch (e: Exception) {
+                gameLoop.stop()
+                println("Game Over: ${e.message}")
+                showGameOver()
+            }
             lastMoveTime = currentNanoTime
         }
 
         // display scores
-        val elapsedMs = elapsedNanos / 1_000_000
-        if (elapsedMs != 0L) {
-            graphicsContext.fill = Color.BLACK
-            graphicsContext.font = Font.font("System", FontWeight.BOLD, 15.0)
-            graphicsContext.fillText("scores : ${snake.scores}", 40.0, 20.0)
-            graphicsContext.drawImage(trophy, 10.0, 8.0)
-        }
+        graphicsContext.fill = Color.BLACK
+        graphicsContext.font = Font.font("System", FontWeight.BOLD, 15.0)
+        graphicsContext.fillText("scores : ${snake.scores}", 40.0, 23.0)
+        graphicsContext.drawImage(trophy, 10.0, 8.0)
     }
 
     private fun updateSnakePosition() {
-        if(!gameStarted) { return }
+        // no need to update, if the game hasn't started
+        if(!gameStarted) return
+
         var successfulMove = false
         try {
             if (currentlyActiveKeys.contains(KeyCode.LEFT)) {
@@ -169,8 +229,8 @@ class SnakeGame : Application() {
         } catch (e: Exception) {
             gameLoop.stop()
             println(e.toString())
+            throw RuntimeException("Snake crashed")
         }
         currentlyActiveKeys.clear()
     }
-
 }
