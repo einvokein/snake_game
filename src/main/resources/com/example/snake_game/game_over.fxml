@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/22.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.snake_game.GameOverSceneController">
-    <children>
-        <Label layoutX="117.0" layoutY="68.0" text="GAME OVER" />
-        <Button alignment="CENTER" contentDisplay="CENTER" layoutX="92.0" layoutY="106.0" mnemonicParsing="false" onAction="#onRETURNButtonClick" text="RETURN TO MENU" textAlignment="CENTER" />
-    </children>
+<AnchorPane id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="250.0" prefWidth="250.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.snake_game.GameOverSceneController">
+        <ImageView fitHeight="110.0" fitWidth="110.0" layoutX="70.0" layoutY="25.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/game_over.png" />
+        </ImageView>
+        <ImageView fitHeight="20.0" fitWidth="20.0" layoutX="80.0" layoutY="135.0" pickOnBounds="true" preserveRatio="true">
+            <Image url="@/trophy.png" />
+        </ImageView>
+        <Label fx:id="label" styleClass="label" layoutX="110.0" layoutY="135.0" />
+        <Button styleClass="button" alignment="CENTER" contentDisplay="CENTER" layoutX="35.0" layoutY="186.0" mnemonicParsing="false" onAction="#onRETURNButtonClick" text="RETURN TO MENU" textAlignment="CENTER" />
 </AnchorPane>

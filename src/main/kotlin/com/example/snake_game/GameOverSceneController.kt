@@ -2,15 +2,23 @@ package com.example.snake_game
 
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
+import javafx.fxml.Initializable
 import javafx.scene.Node
+import javafx.scene.control.Label
 import javafx.stage.Stage
+import java.net.URL
+import java.util.*
 
 class GameOverSceneController {
 
     private lateinit var snakeGame: SnakeGame
 
+    @FXML
+    private lateinit var label: Label
+
     fun setGameApp(app: SnakeGame) {
         snakeGame = app
+        label.text = "score: ${snakeGame.snake.scores}"
     }
 
     @FXML

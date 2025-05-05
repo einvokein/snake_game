@@ -1,0 +1,77 @@
+#root {
+    -fx-background-color: white;
+}
+
+/* button design */
+.button {
+    -fx-background-color: rgb(83, 92, 224);
+    -fx-text-fill: white;
+    -fx-text-alignment: CENTER;
+    -fx-font-family: "Arial Rounded MT Bold";
+    -fx-font-weight: BOLD;
+    -fx-font-size: 14px;
+    -fx-padding: 12 24;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+/* hover effect */
+.button:hover {
+    -fx-background-color: rgb(63, 72, 204);
+}
+
+/* click effect */
+.button:pressed {
+    -fx-background-color: rgb(43, 52, 184);
+}
+
+/* label design */
+.label {
+    -fx-font-family: "Arial Rounded MT Bold";
+    -fx-text-fill: BLACK;
+    -fx-font-size: 14px;
+    -fx-font-weight: BOLD;
+}
+
+/* choice-box design */
+.choice-box {
+    -fx-background-color: WHITE;
+    -fx-text-fill: BLACK;
+    -fx-font-family: "Arial Rounded MT Bold";
+    -fx-font-size: 14px;
+    -fx-font-weight: BOLD;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: black;
+    -fx-border-width: 2;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+    -fx-transition: all 0.3s ease-in-out;
+}
+
+/* position text in the middle */
+.choice-box .label {
+    -fx-alignment: center;
+}
+
+/* make dropdown arrow invisible */
+.choice-box .arrow {
+    -fx-opacity: 0;
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+/* hover effect */
+.choice-box:hover {
+    -fx-background-color: rgb(83, 92, 224);
+}
+
+/* click effect */
+.choice-box:pressed {
+    -fx-background-color: rgb(43, 52, 184);
+}

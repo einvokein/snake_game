@@ -7,19 +7,15 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/22.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.snake_game.MenuSceneController">
-   <children>
+<AnchorPane id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="300.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/22.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.snake_game.MenuSceneController">
        <ImageView fitHeight="110.0" fitWidth="110.0" layoutX="95.0" layoutY="24.0" pickOnBounds="true" preserveRatio="true">
-           <image>
-               <Image url="@/logo_3.png" />
-           </image>
+               <Image url="@/logo.png" />
        </ImageView>
-       <Label layoutX="51.0" layoutY="158.0" text="Length of snake" />
-       <ChoiceBox fx:id="lengthChoiceBox" layoutX="157.0" layoutY="154.0" prefHeight="25.0" prefWidth="89.0" />
-       <Label layoutX="45.0" layoutY="214.0" text="Number of fruits" />
-       <ChoiceBox fx:id="fruitChoiceBox" layoutX="157.0" layoutY="210.0" prefHeight="25.0" prefWidth="89.0" />
-       <Label layoutX="86.0" layoutY="270.0" text="Difficulty" />
-       <ChoiceBox fx:id="difficultyChoiceBox" layoutX="157.0" layoutY="266.0" prefHeight="25.0" prefWidth="89.0" />
-       <Button alignment="CENTER" contentDisplay="CENTER" layoutX="127.0" layoutY="333.0" mnemonicParsing="false" onAction="#onPLAYButtonClick" text="PLAY" textAlignment="CENTER" />
-   </children>
+       <Label layoutX="39.0" layoutY="158.0" styleClass="label" text="Length of snake :" />
+       <ChoiceBox fx:id="lengthChoiceBox" layoutX="170.0" layoutY="154.0" prefHeight="25.0" prefWidth="89.0" styleClass="choice-box" />
+       <Label layoutX="37.0" layoutY="215.0" styleClass="label" text="Number of fruits :" />
+       <ChoiceBox fx:id="fruitChoiceBox" layoutX="170.0" layoutY="210.0" prefHeight="25.0" prefWidth="89.0" styleClass="choice-box" />
+       <Label layoutX="86.0" layoutY="272.0" styleClass="label" text="Difficulty :" />
+       <ChoiceBox fx:id="difficultyChoiceBox" layoutX="170.0" layoutY="266.0" prefHeight="25.0" prefWidth="89.0" styleClass="choice-box" />
+       <Button alignment="CENTER" contentDisplay="CENTER" layoutX="110.0" layoutY="333.0" mnemonicParsing="false" onAction="#onPLAYButtonClick" styleClass="button" text="PLAY" textAlignment="CENTER" />
 </AnchorPane>

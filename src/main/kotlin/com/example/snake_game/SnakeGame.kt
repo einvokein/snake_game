@@ -49,7 +49,7 @@ class SnakeGame : Application() {
         100.0, 100.0, true, true, true, false
     )
     // logo image
-    private val logo = Image("logo_3.png")
+    private val logo = Image("logo.png")
     // trophy image
     private val trophy =  Image("trophy.png")
 
@@ -59,7 +59,7 @@ class SnakeGame : Application() {
     private lateinit var gameLoop : AnimationTimer
 
     // snake
-    private var snake = Snake(SNAKE_LENGTH, Point(snakeStartX, snakeStartY))
+    var snake = Snake(SNAKE_LENGTH, Point(snakeStartX, snakeStartY))
     // fruits
     private var fruits = mutableListOf<Fruit>()
 
@@ -106,7 +106,7 @@ class SnakeGame : Application() {
         gameOverStage.icons.add(logo)
 
         // set scene
-        val scene = Scene(root, 300.0,200.0)
+        val scene = Scene(root, 250.0,250.0)
 
         gameOverStage.scene = scene
         // set the game window as owner
@@ -217,7 +217,7 @@ class SnakeGame : Application() {
         // display scores
         graphicsContext.fill = Color.BLACK
         graphicsContext.font = Font.font("System", FontWeight.BOLD, 15.0)
-        graphicsContext.fillText("scores : ${snake.scores}", 40.0, 23.0)
+        graphicsContext.fillText("score : ${snake.scores}", 40.0, 23.0)
         graphicsContext.drawImage(trophy, 10.0, 8.0)
     }
 
