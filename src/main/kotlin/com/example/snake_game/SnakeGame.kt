@@ -52,6 +52,7 @@ class SnakeGame : Application() {
     )
     // logo image
     private val logo = Image("logo.png")
+
     // trophy image
     private val trophy =  Image("trophy.png")
 
@@ -137,11 +138,8 @@ class SnakeGame : Application() {
         snake = Snake(SNAKE_LENGTH, Point(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
 
         // reload fruit list
-        for(i in 0 until FRUIT_COUNT) {fruits.add(Fruit())}
-        // generate the first fruits
-        for(fruit in fruits) {
-            fruit.generateFruit()
-        }
+        // and generate the first fruits
+        for(i in 0 until FRUIT_COUNT) {fruits.add(Fruit().apply { generateFruit() })}
 
         // set fx components
         val root = Pane()
@@ -228,20 +226,15 @@ class SnakeGame : Application() {
         // no need to update, if the game hasn't started
         if(!gameStarted) return
 
-        var successfulMove = false
         try {
-            if (currentlyActiveKeys.contains(KeyCode.LEFT)) {
-                successfulMove = snake.move(Direction.LEFT)
-            } else if (currentlyActiveKeys.contains(KeyCode.RIGHT)) {
-                successfulMove = snake.move(Direction.RIGHT)
-            } else if (currentlyActiveKeys.contains(KeyCode.UP)) {
-                successfulMove = snake.move(Direction.UP)
-            } else if (currentlyActiveKeys.contains(KeyCode.DOWN)) {
-                successfulMove = snake.move(Direction.DOWN)
+            val moved = when {
+                currentlyActiveKeys.contains(KeyCode.LEFT) -> snake.move(Direction.LEFT)
+                currentlyActiveKeys.contains(KeyCode.RIGHT) -> snake.move(Direction.RIGHT)
+                currentlyActiveKeys.contains(KeyCode.UP) -> snake.move(Direction.UP)
+                currentlyActiveKeys.contains(KeyCode.DOWN) -> snake.move(Direction.DOWN)
+                else -> false
             }
-            if (!successfulMove) {
-                snake.move(snake.currentDirection)
-            }
+            if (!moved) snake.move(snake.currentDirection)
         } catch (e: Exception) {
             gameLoop.stop()
             println(e.toString())

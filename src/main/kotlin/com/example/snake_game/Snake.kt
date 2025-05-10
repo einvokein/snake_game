@@ -1,19 +1,30 @@
 package com.example.snake_game
 
-import kotlin.math.sqrt
 import javafx.scene.image.Image
 import javafx.scene.canvas.GraphicsContext
 import com.example.snake_game.SnakeGame.Companion.WINDOW_WIDTH
 import com.example.snake_game.SnakeGame.Companion.WINDOW_HEIGHT
 
-class Snake(private var length : Int, startHere : Point) {
+class Snake(length : Int, startHere : Point) {
 
     // list of body segments
     private var segments = mutableListOf<Point>()
 
-    private val minLength = 5               // length of snake at the beginning
-    private val segmentSize = 25            // pixel
-    var currentDirection = Direction.LEFT   // direction the snake is headed at first
+    // length of the snake
+    private var length = length
+        set(value) {
+            if(value > field){
+                field = value
+                segments.add(next())
+            }
+        }
+
+    // minimal length of snake at the beginning
+    private var minLength = 5
+    // segment size in pixel
+    private val segmentSize = 25
+    // direction the snake is headed at first
+    var currentDirection = Direction.LEFT
 
     // set images
     private var head = Image("head_horizontal.png")
@@ -25,52 +36,47 @@ class Snake(private var length : Int, startHere : Point) {
     init {
         // length cannot be less than minimal
         if(length < minLength) {
-            length = minLength
+            this.length = minLength
         }
         // position the snake horizontally, facing left
         for (i in 0 until length) {
-            segments.add(Point(startHere.x + segmentSize * i, startHere.y))
+            segments.add(startHere.offsetX(segmentSize * i))
         }
     }
 
     private fun next(): Point {
-        val lastX = segments[segments.lastIndex].x
-        val lastButOneX = segments[segments.lastIndex - 1].x
-        val lastY = segments[segments.lastIndex].y
-        val lastButOneY = segments[segments.lastIndex - 1].y
-        return if(lastX == lastButOneX) {
-            Point(lastX, 2 * lastY - lastButOneY)
+        val last = segments[segments.lastIndex]
+        val lastButOne = segments[segments.lastIndex - 1]
+        return if(last.x == lastButOne.x) {
+            last.offsetY(last.y - lastButOne.y)
         } else {
-            Point(2 * lastX - lastButOneX, lastY)
+            last.offsetX(last.x - lastButOne.x)
         }
-    }
-
-    private fun increaseLength() {
-        length++
-        segments.add(next())
     }
 
     fun move(direction : Direction) : Boolean {
+        // in case of invalid direction
         if(!isValidDirection(direction)) {
             return false
         }
-        val firstX = segments[0].x
-        val firstY = segments[0].y
+
+        val first = segments[0]
+
         when(direction) {
             Direction.UP -> {
-                segments.addFirst(Point(firstX, firstY - segmentSize))
+                segments.addFirst(first.offsetY(-segmentSize))
                 head = Image("head_vertical.png")
             }
             Direction.DOWN -> {
-                segments.addFirst(Point(firstX, firstY + segmentSize))
+                segments.addFirst(first.offsetY(segmentSize))
                 head = Image("head_vertical.png")
             }
             Direction.LEFT -> {
-                segments.addFirst(Point(firstX - segmentSize, firstY))
+                segments.addFirst(first.offsetX(-segmentSize))
                 head = Image("head_horizontal.png")
             }
             Direction.RIGHT -> {
-                segments.addFirst(Point(firstX + segmentSize, firstY))
+                segments.addFirst(first.offsetX(segmentSize))
                 head = Image("head_horizontal.png")
             }
         }
@@ -86,7 +92,7 @@ class Snake(private var length : Int, startHere : Point) {
         return true
     }
 
-    private fun isValidDirection(direction : Direction) : Boolean {
+    private fun isValidDirection(direction : Direction): Boolean {
         return !(currentDirection == Direction.UP && direction == Direction.DOWN
                 || currentDirection == Direction.LEFT && direction == Direction.RIGHT
                 || currentDirection == Direction.DOWN && direction == Direction.UP
@@ -94,16 +100,11 @@ class Snake(private var length : Int, startHere : Point) {
     }
 
     fun eatFruit(fruit : Fruit) {
-        if(distance(segments[0], fruit.position) <= segmentSize) {
-            increaseLength()
+        if(segments[0].distance(fruit.position) <= segmentSize) {
+            length++
             scores++
             fruit.generateFruit()
         }
-    }
-
-    private fun distance(point : Point, otherPoint : Point) : Double {
-        return sqrt(((point.x - otherPoint.x) * (point.x - otherPoint.x)
-                + (point.y - otherPoint.y) * (point.y - otherPoint.y)).toDouble())
     }
 
     private fun checkIfNeedsToDie() : SnakeState {
@@ -112,7 +113,7 @@ class Snake(private var length : Int, startHere : Point) {
             return SnakeState.Dead("Hit wall")
         }
         for(i in segments.lastIndex downTo 1) {
-            if(distance(segments[0], segments[i]) < segmentSize) {
+            if(segments[0].distance(segments[i]) < segmentSize) {
                 return SnakeState.Dead("Hit itself")
             }
         }

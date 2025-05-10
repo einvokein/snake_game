@@ -2,12 +2,9 @@ package com.example.snake_game
 
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
-import javafx.fxml.Initializable
-import javafx.scene.Node
-import javafx.scene.control.Label
 import javafx.stage.Stage
-import java.net.URL
-import java.util.*
+import javafx.scene.control.Label
+import javafx.scene.Node
 
 class GameOverSceneController {
 

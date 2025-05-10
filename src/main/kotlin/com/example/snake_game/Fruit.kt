@@ -6,7 +6,7 @@ import javafx.scene.canvas.GraphicsContext
 import com.example.snake_game.SnakeGame.Companion.WINDOW_WIDTH
 import com.example.snake_game.SnakeGame.Companion.WINDOW_HEIGHT
 
-class Fruit() {
+class Fruit {
 
     // position of fruit
     lateinit var position : Point
@@ -22,5 +22,4 @@ class Fruit() {
     fun draw(graphicsContext: GraphicsContext) {
         graphicsContext.drawImage(fruit, position.x.toDouble(), position.y.toDouble())
     }
-
 }

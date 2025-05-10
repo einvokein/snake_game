@@ -1,7 +1,5 @@
 package com.example.snake_game
 
-import javafx.event.ActionEvent
-import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
 import java.net.URL
