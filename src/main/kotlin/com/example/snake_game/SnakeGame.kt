@@ -25,9 +25,15 @@ class SnakeGame : Application() {
         var SNAKE_LENGTH = 5
         var FRUIT_COUNT = 2
         var SPEED = 1.0
+        // Image of background
+        private val background by lazy { Image("background.png", false) }
+        // Logo image
+        private val logo by lazy { Image("logo.png") }
+        // Trophy image
+        private val trophy by lazy { Image("trophy.png") }
     }
 
-    // fx components
+    // Fx components
     private lateinit var stage: Stage
     private lateinit var menuScene: Scene
     private lateinit var menuController: MenuSceneController
@@ -35,44 +41,34 @@ class SnakeGame : Application() {
     private lateinit var graphicsContext: GraphicsContext
     private var lastFrameTime: Long = System.nanoTime()
 
-    // use a set so duplicates are not possible
+    // Set of pressed keys
     private val currentlyActiveKeys = mutableSetOf<KeyCode>()
-    // starting position of snake
+    // Starting position of snake
     private var snakeStartX = WINDOW_WIDTH / 2
     private var snakeStartY = WINDOW_HEIGHT / 2
-    // reduce speed by moving less often
+    // Reduce speed by moving less often
     private var lastMoveTime = 0L
-    //private val moveIntervalNanos = 200_000_000L * (1/SPEED) // 200ms in nanoseconds
     private var moveIntervalNanos = 200_000_000.0
-    //image of background
-    private val background = Image("background.png", false)
-    // size of background
+
+    // Size of background
     private val backgroundSize = BackgroundSize(
         100.0, 100.0, true, true, true, false
     )
-    // logo image
-    private val logo = Image("logo.png")
 
-    // trophy image
-    private val trophy =  Image("trophy.png")
-
-    // flag indicating the game has started
+    // Flag indicating the game has started
     private var gameStarted = false
-    // game loop for control
+    // Game loop for control
     private lateinit var gameLoop : AnimationTimer
 
-    // snake
+    // Snake
     var snake = Snake(SNAKE_LENGTH, Point(snakeStartX, snakeStartY))
-    // fruits
+    // Fruits
     private var fruits = mutableListOf<Fruit>()
 
     override fun start(primaryStage: Stage) {
-        // set stage reference
         stage = primaryStage
-        //window title
         stage.title = "SnakeGame"
         stage.isResizable = false
-        // set application logo
         stage.icons.add(logo)
         showMenu()
     }
@@ -103,10 +99,8 @@ class SnakeGame : Application() {
         gameOverController.setGameApp(this)
 
         val gameOverStage = Stage()
-        // window title
         gameOverStage.title = "SnakeGame"
         gameOverStage.isResizable = false
-        // set application logo
         gameOverStage.icons.add(logo)
 
         // set scene
@@ -131,13 +125,13 @@ class SnakeGame : Application() {
     }
 
     fun startGame() {
-        // Reset game state
+        // reset game state
         gameStarted = false
         currentlyActiveKeys.clear()
         fruits.clear()
         snake = Snake(SNAKE_LENGTH, Point(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2))
 
-        // reload fruit list
+        // load fruit list
         // and generate the first fruits
         for(i in 0 until FRUIT_COUNT) {fruits.add(Fruit().apply { generateFruit() })}
 
@@ -178,11 +172,13 @@ class SnakeGame : Application() {
     private fun prepareActionHandlers() {
         gameScene.onKeyPressed = EventHandler { event ->
             currentlyActiveKeys.add(event.code)
-            // starts moving the snake after pressing the first key
+            // the snake only starts moving after pressing the first key
             gameStarted = true
         }
     }
 
+    // Implements updates
+    // by clearing canvas and redrawing objects
     private fun tickAndRender(currentNanoTime: Long) {
         // set lastFrameTime
         lastFrameTime = currentNanoTime
@@ -196,20 +192,19 @@ class SnakeGame : Application() {
             fruit.draw(graphicsContext)
         }
 
-        // snake tries to eat fruit
+        // snake tries to eat fruits
         for (fruit in fruits) {
             snake.eatFruit(fruit)
         }
 
         moveIntervalNanos = 200_000_000.0 * (1.0/SPEED)
         // perform world updates
-        // move only if enough time has passed (for slower movement)
         if (currentNanoTime - lastMoveTime >= moveIntervalNanos) {
             try {
                 updateSnakePosition()
             } catch (e: Exception) {
                 gameLoop.stop()
-                println("Game Over: ${e.message}")
+                // println("Game Over: ${e.message}")
                 showGameOver()
             }
             lastMoveTime = currentNanoTime
@@ -222,6 +217,7 @@ class SnakeGame : Application() {
         graphicsContext.drawImage(trophy, 10.0, 8.0)
     }
 
+    // Updates snake position
     private fun updateSnakePosition() {
         // no need to update, if the game hasn't started
         if(!gameStarted) return
@@ -237,7 +233,7 @@ class SnakeGame : Application() {
             if (!moved) snake.move(snake.currentDirection)
         } catch (e: Exception) {
             gameLoop.stop()
-            println(e.toString())
+            // println(e.toString())
             throw RuntimeException("Snake crashed")
         }
         currentlyActiveKeys.clear()

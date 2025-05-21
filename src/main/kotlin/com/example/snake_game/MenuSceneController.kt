@@ -2,9 +2,9 @@ package com.example.snake_game
 
 import javafx.fxml.FXML
 import javafx.fxml.Initializable
+import javafx.scene.control.ChoiceBox
 import java.net.URL
 import java.util.*
-import javafx.scene.control.ChoiceBox
 
 class MenuSceneController : Initializable {
 
@@ -55,6 +55,12 @@ class MenuSceneController : Initializable {
             }
     }
 
+    enum class Length {SHORT, MEDIUM, LARGE }
+
+    private val numOfFruit = listOf(1,2,3,4,5)
+
+    enum class Difficulty {EASY, NORMAL, HARD }
+
     override fun initialize(location: URL?, resources: ResourceBundle?) {
         lengthChoiceBox.items.addAll(Length.entries)
         lengthChoiceBox.value = Length.MEDIUM
@@ -63,10 +69,4 @@ class MenuSceneController : Initializable {
         difficultyChoiceBox.items.addAll(Difficulty.entries)
         difficultyChoiceBox.value = Difficulty.NORMAL
     }
-
-    enum class Length {SHORT, MEDIUM, LARGE }
-
-    private val numOfFruit = arrayOf(1,2,3,4,5)
-
-    enum class Difficulty {EASY, NORMAL, HARD }
 }

@@ -3,8 +3,8 @@ package com.example.snake_game
 import javafx.event.ActionEvent
 import javafx.fxml.FXML
 import javafx.stage.Stage
-import javafx.scene.control.Label
 import javafx.scene.Node
+import javafx.scene.control.Label
 
 class GameOverSceneController {
 
@@ -20,10 +20,10 @@ class GameOverSceneController {
 
     @FXML
     fun onRETURNButtonClick(event : ActionEvent) {
-        // close the game over window
+        // Close the game over window
         val currentStage = (event.source as Node).scene.window as Stage
         currentStage.close()
-        // open menu window
+        // Show menu window
         snakeGame.showMenu()
     }
 }
